@@ -42,4 +42,5 @@ The script requires that all three of the required files be in the folder you wa
 ## To-Do List
 * Add error checking for folders that don't exist or are misspelled.
 * Add default behavior (when no arguments are given) to look in every subfolder and attempt to create a map from that.
-* Expand error checking to make sure image dimensions match and prefabs.xml 
+* Expand error checking to make sure image dimensions match and prefabs.xml
+* Add output of complete POI listing (intersection of desired POIs and POIs that are present)
