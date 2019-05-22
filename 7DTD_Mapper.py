@@ -137,7 +137,6 @@ if __name__ == "__main__":
         quit(1)
     folders = args[1:]
     logging.debug(folders)
-
     Image.MAX_IMAGE_PIXELS = None  # this is necessary for 16k maps, otherwise decompression bomb-prevention kicks in and cancels it
 
     for name in folders:
