@@ -1,2 +1,2 @@
-python 7DTD_Mapper.py "South Pudume County" "Zuhehi Territory"
+python 7DTD_Mapper.py
 pause

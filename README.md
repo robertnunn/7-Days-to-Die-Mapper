@@ -43,6 +43,4 @@ The script requires that all three of the required files be in the folder you wa
 prefab_lookup.csv is a comma-separated value file, that matches the internal name of a prefab (first column) with the "pretty" name (second column; I have taken a couple liberties with naming). To modify this file, you can simply delete lines if you don't want that POI marked on the map. If you want to add POIs that are not on the list, you can navigate to your 7 Days prefab directory (steamapps/common/7 Days to Die/Data/Prefabs) and examine the images (jpg) to find the desired POI. Once found, add the name of the file without file extension to a new line in prefab_lookup.csv (order doesn't matter) and the "pretty" name you want displayed in the legend.
 
 ## To-Do List
-* Add error checking for folders that don't exist or are misspelled.
-* Expand error checking to make sure image dimensions match and prefabs.xml
 * Add output of complete POI listing with in-game coordinates (intersection of desired POIs and POIs that are present)

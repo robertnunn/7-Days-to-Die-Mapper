@@ -2,8 +2,9 @@ from PIL import Image, ImageDraw, ImageFont
 import xml.etree.ElementTree as et
 import sys
 import logging
+import os
 
-logging.basicConfig(level=logging.DEBUG, filename='mapping.log', filemode='w')
+logging.basicConfig(level=logging.INFO, filename='mapping.log', filemode='w')
 
 
 # takes the POI coords and gets the coords for the label
@@ -49,13 +50,19 @@ def pretty_in_game_coords(coord_tuple):
 
 # do the thing
 def main(folder):
-
-    # get biome and road maps
-    biomes = Image.open(folder + '\\biomes.png').convert('RGBA')
-    roads = Image.open(folder + '\\splat3.png').convert('RGBA')
+    try:
+        # get biome and road maps
+        biomes = Image.open(folder + '\\biomes.png').convert('RGBA')
+        roads = Image.open(folder + '\\splat3.png').convert('RGBA')
+        prefabs_xml = folder + '\\prefabs.xml'
+    except:
+        logging.error('Missing required file(s), aborting ' + folder)
+        return
+    if biomes.size != roads.size:
+        logging.error('Size mismatch between biomes and roads. Aborting ' + folder + ' biomes: ' + str(biomes.size) + ' roads: ' + str(roads.size))
+        return
     out = Image.alpha_composite(biomes, roads)
     out.save(folder + '\\' + folder + ' no markers.png', 'png')  # this needs to set the filename to the folder name
-    # out = Image.open('copy.png')
     map_size = out.size[0]
     logging.debug("map_size: " + str(map_size))
 
@@ -65,11 +72,11 @@ def main(folder):
         prefab_set = set(prefab_text.split('\n'))
     try:
         prefab_set.remove('')  # remove empty string from set
-    except:
+    except KeyError:
         pass
 
-    prefab_list = list(prefab_set)  # back to the more comfortable list
-    for i in prefab_list:
+    # prefab_list = list(prefab_set)  # because sets aren't
+    for i in prefab_set:
         in_name, nice_name = i.split(',')
         pretty_name_dict[in_name] = nice_name  # create name-pretty name lookup dict
     logging.debug("pretty name keys")
@@ -79,9 +86,12 @@ def main(folder):
     reverse_pretty_name_dict = dict((v, k) for k, v in pretty_name_dict.items())  # #######################
 
     # this block of code pulls all the individual POIs out of the XML file
-    filename = folder + '\\prefabs.xml'
     results = dict()
-    tree = et.parse(filename)
+    try:
+        tree = et.parse(prefabs_xml)
+    except:
+        logging.error('Error parsing prefabs.xml for ' + folder + ', aborting.')
+        return
     prefabs = tree.findall('./decoration')
     for model in prefabs:
         name = model.get('name')
@@ -107,7 +117,6 @@ def main(folder):
     logging.debug(search_list)
     logging.debug("pretty name list")
     logging.debug(pretty_name_list)
-    # logging.debug(search_list)
 
     fnt = ImageFont.truetype('LSANSD.ttf', 45)  # get a font
     fnt_color = (0, 162, 232, 255)  # default color (0, 162, 232, 255)
@@ -132,14 +141,21 @@ def main(folder):
 
 if __name__ == "__main__":
     args = sys.argv
-    if len(args) < 2:
-        print('Error: Specify at least one folder')
-        quit(1)
-    folders = args[1:]
+    if len(args) < 2:  # if no folders are specified, look in every folder in the directory
+        logging.debug('scanning folders')
+        folders = []
+        for entry in os.scandir():
+            if entry.is_dir():
+                folders.append(entry)
+    else:
+        folders = args[1:]
+        for i in folders:
+            if not os.path.isdir(i):
+                folders.remove(i)
     logging.debug(folders)
     Image.MAX_IMAGE_PIXELS = None  # this is necessary for 16k maps, otherwise decompression bomb-prevention kicks in and cancels it
 
     for name in folders:
-        print('Processing ' + name)
-        logging.debug('Processing ' + name)
-        main(name)
+        print('Processing ' + name.name)
+        logging.info('Processing ' + name.name)
+        main(name.name)
