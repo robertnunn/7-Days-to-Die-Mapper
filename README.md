@@ -16,9 +16,9 @@ The "South Pudume County" and "Zuhehi Territory" folders show example outputs fo
 ### Dependencies
 This script depends on the following libraries (current versions as of April 16, 2019)
 * sys
-* logging
-* xml.ElementTree
-* Pillow 
+* logging (0.5.1.2)
+* xml.ElementTree (1.3.0)
+* Pillow (6.0.0)
 * os
 ### Technical Overview
 During the process of world generation, the game generates three files: biomes.png (shows what biomes are where), splat3.png (shows all roads), and prefabs.xml (an xml listing of every POI and its location). 7DTD_Mapper can be run from a batch file (if on windows) or a bash script (if on linux, usually server admins) and takes arguments in the form of a space-delimited list of folder names (the sample folders require quotes). At the moment, it can take any number of folders as arguments, but it currently lacks error-checking for folder names. The script produces three files and places them in the same folder as their source data: two maps (one with labels, one without), and a legend file that tells you what the number labels mean.
