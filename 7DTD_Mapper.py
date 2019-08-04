@@ -58,9 +58,19 @@ def main(folder):
     except:
         logging.error('Missing required file(s), aborting ' + folder)
         return
+    try:
+        nitro_map = Image.open(folder + '\\previewMap.png').convert('RGBA')
+        nitro_bool = True
+    except:
+        nitro_bool = False
+
     if biomes.size != roads.size:
         logging.error('Size mismatch between biomes and roads. Aborting ' + folder + ' biomes: ' + str(biomes.size) + ' roads: ' + str(roads.size))
         return
+    if nitro_bool:
+        if nitro_map.size != biomes.size:
+            logging.error('Size mismatch between biomes and previewMap. Cancelling labeling of previewMap in ' + folder)
+            nitro_bool = False
     out = Image.alpha_composite(biomes, roads)
     out.save(folder + '\\' + folder + ' no markers.png', 'png')  # this needs to set the filename to the folder name
     map_size = out.size[0]
@@ -120,7 +130,9 @@ def main(folder):
 
     fnt = ImageFont.truetype('LSANSD.ttf', 45)  # get a font
     fnt_color = (0, 162, 232, 255)  # default color (0, 162, 232, 255)
-    d = ImageDraw.Draw(out)  # get a drawing context
+    d = ImageDraw.Draw(out)  # get a drawing context for the biome+road composite
+    if nitro_bool:
+        dp = ImageDraw.Draw(nitro_map)  # get a drawing context for the NitroGen previewMap.png
     legend = ['Marker\tPOI Name (count)']  # write header row
     for i in range(len(pretty_search_list)):
         marker = str(i)  # POIs are listed by number, lookup table in a text file
@@ -133,8 +145,12 @@ def main(folder):
         for j in current_POI_loc_list:  # iterate through each instance of the POI
             txt_coords = marker_coords(marker, j[0], j[1], fnt)  # adjust placement of the marker to center it over the
             d.text(txt_coords, marker, font=fnt, fill=fnt_color)
+            if nitro_bool:
+                dp.text(txt_coords, marker, font=fnt, fill=fnt_color)
 
     out.save(folder + '\\' + folder + ' with markers.png', 'png')  # writing the marked map
+    if nitro_bool:
+        nitro_map.save(folder + '\\previewMap with markers.png', 'png')  # write the marked previewMap.png
     with open(folder + '\\' + folder + ' legend.txt', mode='w') as leg:  # writing the legend file
         leg.write('\n'.join(legend))
 
