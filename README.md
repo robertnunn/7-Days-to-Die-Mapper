@@ -44,3 +44,4 @@ prefab_lookup.csv is a comma-separated value file, that matches the internal nam
 
 ## To-Do List
 * Add output of complete POI listing with in-game coordinates (intersection of desired POIs and POIs that are present)
+* Move loading of prefab_lookup.csv outside main so it's not repeated every time

@@ -3,17 +3,31 @@ import xml.etree.ElementTree as et
 import sys
 import logging
 import os
+import time
 
 logging.basicConfig(level=logging.INFO, filename='mapping.log', filemode='w')
 
 
+def timeme(method):
+    def wrapper(*args, **kw):
+        startTime = int(round(time.time() * 1000))
+        result = method(*args, **kw)
+        endTime = int(round(time.time() * 1000))
+
+        print(endTime - startTime,'ms')
+        return result
+
+    return wrapper
+
+
 # takes the POI coords and gets the coords for the label
+# this centers the marker (char) on the point specified (x_coord, y_coord)
 def marker_coords(char, x_coord, y_coord, font):
-  size = font.getsize(char)  # gets a tuple with size of text in pixels (X, Y) (X is horiz, Y is vert)
-  x_offset = size[0] // 2  # (integer division)
-  y_offset = size[1] // 2  # (integer division)
-  coords = (x_coord - x_offset, y_coord - y_offset)  # origin (0,0) is upper left corner
-  return coords
+    size = font.getsize(char)  # gets a tuple with size of text in pixels (X, Y) (X is horiz, Y is vert)
+    x_offset = size[0] // 2  # (integer division)
+    y_offset = size[1] // 2  # (integer division)
+    coords = (x_coord - x_offset, y_coord - y_offset)  # origin (0,0) is upper left corner
+    return coords
 
 
 # convert between in-game coordinates and pillow coordinates
@@ -48,8 +62,33 @@ def pretty_in_game_coords(coord_tuple):
     return NS + " " + EW
 
 
+# returns a tuple containing both pretty and reverse pretty name dictionaries
+# pretty name dict = p_n_d[internal name] = pretty display name
+def get_prefab_lookup(lookup_csv):
+    pretty_name_dict = dict()
+    with open(lookup_csv) as lookup_csv_file:  # open the file, read it, split it into a list of lines, typecast to set to remove duplicates
+        prefab_text = lookup_csv_file.read()
+        prefab_set = set(prefab_text.split('\n'))
+    try:
+        prefab_set.remove('')  # remove empty string from set
+    except KeyError:
+        pass
+
+    # prefab_list = list(prefab_set)  # because sets aren't
+    for i in prefab_set:
+        in_name, nice_name = i.split(',')
+        pretty_name_dict[in_name] = nice_name  # create name-pretty name lookup dict
+    logging.debug("pretty name keys")
+    logging.debug(pretty_name_dict.keys())
+    logging.debug("pretty name values")
+    logging.debug(pretty_name_dict.values())
+    reverse_pretty_name_dict = dict((v, k) for k, v in pretty_name_dict.items())  # #######################
+    return pretty_name_dict, reverse_pretty_name_dict
+
+
 # do the thing
-def main(folder):
+@timeme
+def main(folder, lookup):
     try:
         # get biome and road maps
         biomes = Image.open(folder + '\\biomes.png').convert('RGBA')
@@ -76,24 +115,8 @@ def main(folder):
     map_size = out.size[0]
     logging.debug("map_size: " + str(map_size))
 
-    pretty_name_dict = dict()
-    with open('prefab_lookup.csv') as lookup_csv:  # open the file, read it, split it into a list of lines, typecast to set to remove duplicates
-        prefab_text = lookup_csv.read()
-        prefab_set = set(prefab_text.split('\n'))
-    try:
-        prefab_set.remove('')  # remove empty string from set
-    except KeyError:
-        pass
-
-    # prefab_list = list(prefab_set)  # because sets aren't
-    for i in prefab_set:
-        in_name, nice_name = i.split(',')
-        pretty_name_dict[in_name] = nice_name  # create name-pretty name lookup dict
-    logging.debug("pretty name keys")
-    logging.debug(pretty_name_dict.keys())
-    logging.debug("pretty name values")
-    logging.debug(pretty_name_dict.values())
-    reverse_pretty_name_dict = dict((v, k) for k, v in pretty_name_dict.items())  # #######################
+    pretty_name_dict = lookup[0]
+    reverse_pretty_name_dict = lookup[1]
 
     # this block of code pulls all the individual POIs out of the XML file
     results = dict()
@@ -170,8 +193,11 @@ if __name__ == "__main__":
                 folders.remove(i)
     logging.debug(folders)
     Image.MAX_IMAGE_PIXELS = None  # this is necessary for 16k maps, otherwise decompression bomb-prevention kicks in and cancels it
+    lookup_csv_path = 'prefab_lookup.csv'
+
+    lookup_csv = get_prefab_lookup(lookup_csv_path)
 
     for name in folders:
         print('Processing ' + name.name)
         logging.info('Processing ' + name.name)
-        main(name.name)
+        main(name.name, lookup_csv)
