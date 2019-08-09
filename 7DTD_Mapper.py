@@ -20,6 +20,18 @@ def timeme(method):
     return wrapper
 
 
+def timeme(method):
+    def wrapper(*args, **kw):
+        startTime = int(round(time.time() * 1000))
+        result = method(*args, **kw)
+        endTime = int(round(time.time() * 1000))
+
+        print(endTime - startTime,'ms')
+        return result
+
+    return wrapper
+
+
 # takes the POI coords and gets the coords for the label
 # this centers the marker (char) on the point specified (x_coord, y_coord)
 def marker_coords(char, x_coord, y_coord, font):
