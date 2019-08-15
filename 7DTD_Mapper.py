@@ -14,19 +14,7 @@ def timeme(method):
         result = method(*args, **kw)
         endTime = int(round(time.time() * 1000))
 
-        print(endTime - startTime,'ms')
-        return result
-
-    return wrapper
-
-
-def timeme(method):
-    def wrapper(*args, **kw):
-        startTime = int(round(time.time() * 1000))
-        result = method(*args, **kw)
-        endTime = int(round(time.time() * 1000))
-
-        print(endTime - startTime,'ms')
+        print('Function: ' + method.__name__ + ' took ', endTime - startTime,'ms')
         return result
 
     return wrapper
@@ -76,6 +64,7 @@ def pretty_in_game_coords(coord_tuple):
 
 # returns a tuple containing both pretty and reverse pretty name dictionaries
 # pretty name dict = p_n_d[internal name] = pretty display name
+@timeme
 def get_prefab_lookup(lookup_csv):
     pretty_name_dict = dict()
     with open(lookup_csv) as lookup_csv_file:  # open the file, read it, split it into a list of lines, typecast to set to remove duplicates
