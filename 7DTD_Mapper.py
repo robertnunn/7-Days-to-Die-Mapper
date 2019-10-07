@@ -14,7 +14,7 @@ def timeme(method):
         result = method(*args, **kw)
         endTime = int(round(time.time() * 1000))
 
-        print('Function: ' + method.__name__ + ' took ', endTime - startTime,'ms')
+        print('Function: ' + method.__name__ + ' took ', endTime - startTime, 'ms')
         return result
 
     return wrapper

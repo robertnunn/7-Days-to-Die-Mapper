@@ -1,0 +1,9 @@
+INFO:root:Processing .git
+ERROR:root:Missing required file(s), aborting .git
+INFO:root:Processing .idea
+ERROR:root:Missing required file(s), aborting .idea
+INFO:root:Processing Fallout
+INFO:root:Processing old
+ERROR:root:Missing required file(s), aborting old
+INFO:root:Processing OldSchool
+INFO:root:Processing TheFrozenNorth
