@@ -10,7 +10,7 @@ In addition to overlaying the road map onto the biome map, it also takes in the 
 If a particular POI only has one instance, the legend will also include the in-game coordinates (e.g., xxxN xxxW) so you don't have to hunt over a huge map for a particular POI (I'm looking at you traders and skyscrapers!)
 
 ## Example Maps
-The "South Pudume County" and "Zuhehi Territory" folders show example outputs for 8k maps.
+The "Fallout" "OldSchool", and "TheFrozenNorth" folders show example outputs for 8k maps.
 
 ## Technical Details
 ### Dependencies
