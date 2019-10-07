@@ -1,6 +1,6 @@
 # 7 Days to Die Mapper
 ## Overview
-Takes in the biomes.png, splat3.png, and prefabs.xml documents created during world generation and combines them into a labeled map showing desired points of interest.
+Takes in the biomes.png, splat3.png, and prefabs.xml documents created during world generation and combines them into a labeled map showing desired points of interest. Supports labeling the "previewMap.png" file generated using [NitroGen](https://7daystodie.com/forums/showthread.php?114207-Tool-NITROGEN-a-random-world-generator-for-7DtD).
 
 ## Details
 This is a python script that produces a labeled and unlabeled composite map that shows the roads (highways, local roads, country roads) and the biome at a particular place. The maps are 1-to-1 with the game world, meaning one pixel on the map is one block in the game. 
