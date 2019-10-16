@@ -21,7 +21,7 @@ This script depends on the following libraries (current versions as of April 16,
 * Pillow (6.0.0)
 * os
 ### Technical Overview
-During the process of world generation, the game generates three files: biomes.png (shows what biomes are where), splat3.png (shows all roads), and prefabs.xml (an xml listing of every POI and its location). 7DTD_Mapper can be run from a batch file (if on windows) or a bash script (if on linux, usually server admins) and takes arguments in the form of a space-delimited list of folder names (the sample folders require quotes). At the moment, it can take any number of folders as arguments. If run with no arguments, it will scan any folders in the current directory and attempt to create maps from the files in those folders. The script produces three files and places them in the same folder as their source data: two maps (one with labels, one without), and a legend file that tells you what the number labels mean.
+During the process of world generation, the game generates three files: biomes.png (shows what biomes are where), splat3.png (shows all roads), and prefabs.xml (an xml listing of every POI and its location). 7DTD_Mapper can be run from a batch file (if on windows) or a bash script (if on linux, usually server admins) and takes arguments in the form of a space-delimited list of folder names (folder names with spaces will require quotes). At the moment, it can take any number of folders as arguments. If run with no arguments, it will scan any folders in the current directory and attempt to create maps from the files in those folders. The script produces three files and places them in the same folder as their source data: two maps (one with labels, one without), and a legend file that tells you what the number labels mean.
 
 ### Folder Structure
 The script requires that all three of the required files be in the folder you want to generate a map of. The mapper script, font file (LSANSD.ttf), and prefab lookup (prefab_lookup.csv) should be in the root folder. See below for a diagram.
@@ -30,14 +30,20 @@ The script requires that all three of the required files be in the folder you wa
     7DTD_Mapper.py
     LSANSD.TTF
     prefab_lookup.csv
-    South Pudume County\
+    Fallout\
       biomes.png
       splat3.png
       prefabs.xml
-    Zuhehi Territory\
+      previewMap.png
+    OldSchool\
       biomes.png
       splat3.png
       prefabs.xml
+    TheFrozenNorth\
+      biomes.png
+      splat3.png
+      prefabs.xml
+      previewMap.png
 ```
 ### Editing prefab_lookup.csv
 prefab_lookup.csv is a comma-separated value file, that matches the internal name of a prefab (first column) with the "pretty" name (second column; I have taken a couple liberties with naming). To modify this file, you can simply delete lines if you don't want that POI marked on the map. If you want to add POIs that are not on the list, you can navigate to your 7 Days prefab directory (steamapps/common/7 Days to Die/Data/Prefabs) and examine the images (jpg) to find the desired POI. Once found, add the name of the file without file extension to a new line in prefab_lookup.csv (order doesn't matter) and the "pretty" name you want displayed in the legend.
